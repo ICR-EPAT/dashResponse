@@ -1,0 +1,17 @@
+---
+title: "data requirements"
+output: html_document
+---
+
+### Required Columns:
+- Patient/Subject ID
+- Treatment start date  
+- Assessment dates
+- Response values
+
+### Optional Columns:
+- Treatment end date
+- Treatment type/arm
+- Death date
+- Off-study date
+- Baseline characteristics

@@ -1,0 +1,8 @@
+---
+title: "intro"
+output: html_document
+---
+
+# Clinical Response Dashboard
+
+This dashboard is designed to help statisticians to quickly produce standardised plots and reproducible code generation to facilitate statistical analysis report generation.

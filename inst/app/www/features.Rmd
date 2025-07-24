@@ -1,0 +1,10 @@
+---
+title: "features"
+output: html_document
+---
+
+- **Survival Plots:** Kaplan-Meier curves and time-to-event analysis
+- **Waterfall Plots:** Best response and tumor burden changes  
+- **Swimmer Plots:** Treatment duration and response over time
+- **Spider Plots:** Individual patient response trajectories
+- **Summary Tables:** Response rates and outcome distributions

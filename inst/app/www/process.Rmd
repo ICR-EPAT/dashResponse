@@ -1,0 +1,12 @@
+---
+title: "processes"
+output: html_document
+---
+
+
+1. **Upload Data:** CSV/Excel files with patient response data
+2. **Map Columns:** Specify which columns contain patient ID, dates, responses  
+3. **Create Plots:** Generate publication-ready visualizations
+4. **Export Code:** Download reproducible Quarto/R code
+
+> **Tip:** Sample data is available in the Data Selection tab to help you understand the expected format.

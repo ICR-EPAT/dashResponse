@@ -1,0 +1,32 @@
+## Data Format Guide
+
+### Quick Start
+Click **"Load Example Data"** to see a working dataset with pre-configured mappings.
+
+### Expected Data Structure
+
+**Raw Clinical Trial Data** (one row per visit):
+
+
+subject_id | visit_date | visit_type          | tumor_response  |
+-----------|------------|---------------------|-----------------|
+PAT001     | 15/01/2023 | Cycle 1 Day 1       | NA              |
+PAT001     | 18/02/2023 | Cycle 2 Assessment  | PR (Partial response)|
+PAT001     | 15/05/2023 | End of Treatment    | NA|
+
+
+### Required Columns
+- **Patient ID** - Unique identifier  
+- **Date** - Visit/assessment dates
+- **Visit Type** - Event description (Baseline, Cycle X Assessment, End of Treatment)
+- **Response** - Response values (CR, PR, SD, PD, or measurements)
+
+### Supported Formats
+- **Dates**: DD/MM/YYYY, YYYY-MM-DD, MM/DD/YYYY
+- **Responses**: CR, PR, SD, PD, uPD, NE (or numeric values)
+- **Files**: CSV, Excel (.xlsx, .xls)
+
+### The App Will:
+✅ Extract treatment start/end dates from visit types  
+✅ Clean and standardize response values  
+✅ Calculate treatment timelines and best responses

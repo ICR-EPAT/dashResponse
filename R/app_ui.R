@@ -39,11 +39,7 @@ app_ui <- function(request) {
         title = "Data Selection", 
         icon = icon("upload"),
         div(class = "container-fluid py-4",
-            # mod_02_data_ui("02_data_1") # Add when ready
-            div(class = "text-center mt-5",
-                h3("Data Selection Module"),
-                p("Coming soon...")
-            )
+            mod_02_data_selection_ui("02_data_selection"),
         )
       ),
       

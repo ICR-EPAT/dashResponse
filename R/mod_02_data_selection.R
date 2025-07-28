@@ -3,12 +3,11 @@
 #' @description A shiny Module for data upload and column mapping.
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @noRd
-#'
 #' @importFrom shiny NS tagList fileInput selectInput actionButton radioButtons conditionalPanel updateSelectInput updateRadioButtons
 #' @importFrom bslib page_sidebar sidebar card card_header card_body accordion accordion_panel value_box navset_card_tab nav_panel
 #' @importFrom DT DTOutput
+#' @noRd
+#'
 mod_02_data_selection_ui <- function(id) {
   ns <- NS(id)
   
@@ -65,6 +64,22 @@ mod_02_data_selection_ui <- function(id) {
           value = "mapping_panel",
           icon = icon("arrows-alt-h"),
           
+          # Data type selection
+          div(
+            class = "mb-4",
+            h6("Data Type", class = "text-primary fw-bold mb-3"),
+            radioButtons(
+              ns("data_type"),
+              NULL,
+              choices = list(
+                "Raw Trial Data" = "raw",
+                "Structured Data" = "structured"
+              ),
+              selected = "raw",
+              inline = TRUE
+            )
+          ),
+          
           # Required columns section
           div(
             h6("Required Columns", class = "text-success fw-bold mb-3"),
@@ -77,22 +92,26 @@ mod_02_data_selection_ui <- function(id) {
             ),
             
             selectInput(
-              ns("treatment_start_col"),
-              "Treatment Start:",
+              ns("date_col"),
+              "Date Column:",
               choices = NULL,
               selected = ""
             ),
             
-            selectInput(
-              ns("assessment_date_col"),
-              "Assessment Date:",
-              choices = NULL,
-              selected = ""
+            conditionalPanel(
+              condition = "input.data_type == 'raw'",
+              ns = ns,
+              selectInput(
+                ns("visit_col"),
+                "Visit Type:",
+                choices = NULL,
+                selected = ""
+              )
             ),
             
             selectInput(
               ns("response_col"),
-              "Response Value:",
+              "Response Type:",
               choices = NULL,
               selected = ""
             )
@@ -104,32 +123,18 @@ mod_02_data_selection_ui <- function(id) {
             h6("Optional Columns", class = "text-info fw-bold mb-3"),
             
             selectInput(
-              ns("treatment_end_col"),
-              "Treatment End:",
-              choices = NULL,
-              selected = ""
-            ),
-            
-            selectInput(
               ns("treatment_type_col"),
               "Treatment Type:",
               choices = NULL,
               selected = ""
             ),
-            
+
             selectInput(
-              ns("death_date_col"),
-              "Death Date:",
+              ns("response_value_col"),
+              "Response Value:",
               choices = NULL,
               selected = ""
-            ),
-            
-            selectInput(
-              ns("off_study_col"),
-              "Off-Study Date:",
-              choices = NULL,
-              selected = ""
-            )
+            )            
           ),
           
           # Validate button
@@ -188,6 +193,7 @@ mod_02_data_selection_ui <- function(id) {
 #' 02_data_selection Server Functions
 #'
 #' @noRd
+#' 
 mod_02_data_selection_server <- function(id) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
@@ -220,23 +226,23 @@ mod_02_data_selection_server <- function(id) {
         optional_choices <- create_column_choices(values$column_names, include_empty = TRUE, empty_label = "Not specified")
         
         updateSelectInput(session, "patient_id_col", choices = column_choices)
-        updateSelectInput(session, "assessment_date_col", choices = column_choices)
+        updateSelectInput(session, "date_col", choices = column_choices)
         updateSelectInput(session, "response_col", choices = column_choices)
         updateSelectInput(session, "visit_col", choices = column_choices)
-        updateSelectInput(session, "treatment_start_col", choices = column_choices)
-        updateSelectInput(session, "treatment_end_col", choices = optional_choices)
         updateSelectInput(session, "treatment_type_col", choices = optional_choices)
         updateSelectInput(session, "discontinuation_col", choices = optional_choices)
         updateSelectInput(session, "death_cause_col", choices = optional_choices)
+        updateSelectInput(session, "response_value_col", choices = optional_choices)
         
         # Set suggested mappings for the example data
-        updateSelectInput(session, "patient_id_col", selected = "subject_id")
-        updateSelectInput(session, "assessment_date_col", selected = "visit_date")
+        updateSelectInput(session, "patient_id_col", selected = "patient_id")
+        updateSelectInput(session, "date_col", selected = "visit_date")
         updateSelectInput(session, "response_col", selected = "tumor_response")
         updateSelectInput(session, "visit_col", selected = "visit_type")
         updateSelectInput(session, "treatment_type_col", selected = "dose_cohort")
         updateSelectInput(session, "discontinuation_col", selected = "discontinuation_reason")
         updateSelectInput(session, "death_cause_col", selected = "death_cause")
+        updateSelectInput(session, "response_value_col", selected = "size_at_assessment")
         
         # Set data type to raw
         updateRadioButtons(session, "data_type", selected = "raw")
@@ -244,7 +250,7 @@ mod_02_data_selection_server <- function(id) {
         # Open mapping accordion panel
         accordion_panel_open("upload_accordion", "mapping_panel")
         
-        showNotification("Example data loaded with suggested column mappings!", type = "success", duration = 4)
+        showNotification("Example data loaded with suggested column mappings!", type = "message", duration = 4)
         
       }, error = function(e) {
         showNotification(paste("Error loading example data:", e$message), type = "error")
@@ -273,15 +279,14 @@ mod_02_data_selection_server <- function(id) {
         optional_choices <- create_column_choices(values$column_names, include_empty = TRUE, empty_label = "Not specified")
         
         updateSelectInput(session, "patient_id_col", choices = column_choices)
-        updateSelectInput(session, "assessment_date_col", choices = column_choices)
+        updateSelectInput(session, "date_col", choices = column_choices)
         updateSelectInput(session, "response_col", choices = column_choices)
         updateSelectInput(session, "visit_col", choices = column_choices)
-        updateSelectInput(session, "treatment_start_col", choices = column_choices)
-        updateSelectInput(session, "treatment_end_col", choices = optional_choices)
         updateSelectInput(session, "treatment_type_col", choices = optional_choices)
         updateSelectInput(session, "discontinuation_col", choices = optional_choices)
         updateSelectInput(session, "death_cause_col", choices = optional_choices)
-        
+        updateSelectInput(session, "response_value_col", choices = optional_choices)
+
         # Open mapping accordion panel
         accordion_panel_open("upload_accordion", "mapping_panel")
         
@@ -325,63 +330,102 @@ mod_02_data_selection_server <- function(id) {
     
     # Validate column mapping
     observeEvent(input$validate_mapping, {
+      
+      # Debug: Check if data exists
+      if (is.null(values$raw_data)) {
+        showNotification("No data loaded. Please load data first.", type = "error")
+        return()
+      }
+      
+      if (nrow(values$raw_data) == 0) {
+        showNotification("Data is empty. Please load valid data.", type = "error")
+        return()
+      }
+      
       # Check required fields based on data type
       if (input$data_type == "raw") {
-        required_fields <- c(
-          input$patient_id_col,
-          input$assessment_date_col,
-          input$response_col,
-          input$visit_col
+        required_inputs <- list(
+          patient_id_col = input$patient_id_col,
+          date_col = input$date_col,
+          response_col = input$response_col,
+          visit_col = input$visit_col
         )
       } else {
-        required_fields <- c(
-          input$patient_id_col,
-          input$treatment_start_col,
-          input$assessment_date_col,
-          input$response_col
+        required_inputs <- list(
+          patient_id_col = input$patient_id_col,
+          date_col = input$date_col,
+          response_col = input$response_col
         )
       }
       
-      if (any(required_fields == "" | is.null(required_fields))) {
-        showNotification("Please select all required columns", type = "warning")
+      # Debug: Print all inputs
+      cat("=== DEBUGGING COLUMN MAPPING ===\n")
+      cat("Data type:", input$data_type, "\n")
+      cat("Data dimensions:", nrow(values$raw_data), "x", ncol(values$raw_data), "\n")
+      cat("Available columns:", paste(names(values$raw_data), collapse = ", "), "\n")
+      
+      for (name in names(required_inputs)) {
+        value <- required_inputs[[name]]
+        cat(name, ":", ifelse(is.null(value), "NULL", 
+                             ifelse(length(value) == 0, "EMPTY", 
+                                   ifelse(value == "", "BLANK", value))), "\n")
+      }
+      
+      # Check for empty/null values
+      empty_fields <- sapply(required_inputs, function(x) {
+        is.null(x) || length(x) == 0 || x == ""
+      })
+      
+      if (any(empty_fields)) {
+        empty_names <- names(empty_fields)[empty_fields]
+        showNotification(paste("Please select values for:", paste(empty_names, collapse = ", ")), 
+                         type = "warning")
+        return()
+      }
+      
+      # Check if selected columns exist in data
+      selected_cols <- unlist(required_inputs)
+      missing_cols <- setdiff(selected_cols, names(values$raw_data))
+      
+      if (length(missing_cols) > 0) {
+        showNotification(paste("Selected columns not found in data:", paste(missing_cols, collapse = ", ")), 
+                         type = "error")
         return()
       }
       
       # Process data using business logic functions
       tryCatch({
         if (input$data_type == "raw") {
-          # Process raw trial data using fct function
+          cat("Calling process_raw_trial_data with parameters:\n")
+          
           values$processed_data <- process_raw_trial_data(
             data = values$raw_data,
             patient_col = input$patient_id_col,
-            date_col = input$assessment_date_col,
+            date_col = input$date_col,
             visit_col = input$visit_col,
             response_col = input$response_col,
-            treatment_col = if (input$treatment_type_col != "") input$treatment_type_col else NULL,
-            discontinuation_col = if (input$discontinuation_col != "") input$discontinuation_col else NULL,
-            death_cause_col = if (input$death_cause_col != "") input$death_cause_col else NULL
+            treatment_col = if (!is.null(input$treatment_type_col) && input$treatment_type_col != "") input$treatment_type_col else NULL,
+            discontinuation_col = if (!is.null(input$discontinuation_col) && input$discontinuation_col != "") input$discontinuation_col else NULL,
+            death_cause_col = if (!is.null(input$death_cause_col) && input$death_cause_col != "") input$death_cause_col else NULL,
+            response_value_col = if (!is.null(input$response_value_col) && input$response_value_col != "") input$response_value_col else NULL
           )
         } else {
-          # Process structured data using fct function
           values$processed_data <- process_structured_data(
             data = values$raw_data,
             patient_col = input$patient_id_col,
-            treatment_start_col = input$treatment_start_col,
-            assessment_date_col = input$assessment_date_col,
-            response_col = input$response_col,
-            treatment_end_col = if (input$treatment_end_col != "") input$treatment_end_col else NULL,
-            treatment_type_col = if (input$treatment_type_col != "") input$treatment_type_col else NULL
+            treatment_start_col = input$date_col,
+            assessment_date_col = input$date_col,
+            response_col = input$response_col
           )
         }
         
         values$mapping_valid <- TRUE
-        
-        # Open summary accordion panel
-        accordion_panel_open("upload_accordion", "summary_panel")
-        
-        showNotification("Column mapping successful!", type = "success", duration = 3)
+        showNotification("Column mapping successful!", type = "message", duration = 3)
         
       }, error = function(e) {
+        cat("ERROR DETAILS:\n")
+        cat("Message:", e$message, "\n")
+        cat("Call:", deparse(e$call), "\n")
         showNotification(paste("Error in column mapping:", e$message), type = "error")
         values$mapping_valid <- FALSE
       })

@@ -50,7 +50,6 @@ clean_response_values <- function(response_vector) {
       ".*PARTIAL RESPONSE.*" = "PR",
       ".*STABLE DISEASE.*" = "SD",
       ".*PROGRESSIVE DISEASE.*" = "PD",
-      "CPD.*" = "PD",
       "UPD.*" = "uPD",
       ".*NOT EVALUABLE.*" = "NE"
     )

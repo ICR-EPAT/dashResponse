@@ -39,7 +39,7 @@ app_ui <- function(request) {
         title = "Data Selection", 
         icon = icon("upload"),
         div(class = "container-fluid py-4",
-            mod_02_data_selection_ui("02_data_selection"),
+            mod_02_data_selection_ui("02_data_selection")
         )
       ),
       
@@ -47,12 +47,8 @@ app_ui <- function(request) {
         title = "Plotting",
         icon = icon("chart-line"),
         div(class = "container-fluid py-4",
-            # mod_03_plotting_ui("03_plotting_1") # Add when ready
-            div(class = "text-center mt-5",
-                h3("Plotting Module"), 
-                p("Coming soon...")
+            mod_03_plotting_ui("03_plotting") 
             )
-        )
       ),
       
       nav_panel(

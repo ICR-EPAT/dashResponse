@@ -55,11 +55,7 @@ app_ui <- function(request) {
         title = "Code Export",
         icon = icon("code"),
         div(class = "container-fluid py-4",
-            # mod_04_export_ui("04_export_1") # Add when ready
-            div(class = "text-center mt-5",
-                h3("Code Export Module"),
-                p("Coming soon...")
-            )
+            mod_04_code_export_ui("04_code_export")
         )
       ),
       

@@ -12,13 +12,14 @@ process_raw_trial_data(
   response_col,
   treatment_col = NULL,
   discontinuation_col = NULL,
+  response_value_col = NULL,
   death_cause_col = NULL
 )
 }
 \arguments{
 \item{data}{Raw clinical trial data frame}
 
-\item{patient_col}{Name of patient ID column}
+\item{patient_col}{Name of patient ID columns}
 
 \item{date_col}{Name of date column}
 
@@ -29,6 +30,8 @@ process_raw_trial_data(
 \item{treatment_col}{Name of treatment type column (optional)}
 
 \item{discontinuation_col}{Name of discontinuation reason column (optional)}
+
+\item{response_value_col}{Name of response value column (optional)}
 
 \item{death_cause_col}{Name of death cause column (optional)}
 }

@@ -596,6 +596,24 @@ mod_02_data_selection_server <- function(id) {
           } else {
             NULL
           }
+        }),
+        # Add mapping_info for code export
+        mapping_info = reactive({
+          if (values$mapping_valid) {
+            list(
+              data_type = input$data_type,
+              patient_col = input$patient_id_col,
+              date_col = input$date_col,
+              visit_col = if (input$data_type == "raw") input$visit_col else NULL,
+              response_col = input$response_col,
+              treatment_col = if (!is.null(input$treatment_type_col) && input$treatment_type_col != "" && input$treatment_type_col != "Not specified") input$treatment_type_col else NULL,
+              response_value_col = if (!is.null(input$response_value_col) && input$response_value_col != "" && input$response_value_col != "Not specified") input$response_value_col else NULL,
+              discontinuation_col = if (!is.null(input$discontinuation_col) && input$discontinuation_col != "" && input$discontinuation_col != "Not specified") input$discontinuation_col else NULL,
+              death_cause_col = if (!is.null(input$death_cause_col) && input$death_cause_col != "" && input$death_cause_col != "Not specified") input$death_cause_col else NULL
+            )
+          } else {
+            NULL
+          }
         })
       )
     )

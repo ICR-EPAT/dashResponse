@@ -22,10 +22,12 @@ attachment::att_amend_desc()
 ## Create a module infrastructure in R/
 golem::add_module(name = "01_intro", with_test = TRUE) # Name of the module
 golem::add_module(name = "02_data_selection", with_test = TRUE) # Name of the module
+golem::add_module(name = "03_plotting", with_test = TRUE) # Name of the module
+golem::add_module(name = "05_code_export", with_test = TRUE) # Name of the module
 
 ## Add helper functions ----
 ## Creates fct_* and utils_*
-golem::add_fct("helpers", with_test = TRUE)
+golem::add_fct("05_code_export", with_test = TRUE)
 golem::add_utils("helpers", with_test = TRUE)
 
 ## External resources
